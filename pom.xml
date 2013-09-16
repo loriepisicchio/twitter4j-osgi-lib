@@ -1,0 +1,245 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.twitter4j</groupId>
+	<artifactId>twitter4j-osgi</artifactId>
+	<name>twitter4j-osgi</name>
+	<version>3.0.3</version>
+
+	<properties>
+		<!-- Import moTwin SDK OSGI library -->
+		<jar.plugin.version>2.3.1</jar.plugin.version>
+		<bundlor.plugin.version>1.1.1.RELEASE</bundlor.plugin.version>
+	</properties>
+
+	<repositories>
+		<!-- External repositories -->
+		<repository>
+			<id>com.springsource.repository.bundles.release</id>
+			<name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
+			<url>http://repository.springsource.com/maven/bundles/release</url>
+		</repository>
+		<repository>
+			<id>com.springsource.repository.bundles.external</id>
+			<name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+			<url>http://repository.springsource.com/maven/bundles/external</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<!-- External Plugin repositories -->
+		<pluginRepository>
+			<id>com.springsource.repository.bundles.release</id>
+			<name>SpringSource Enterprise Bundle Repository</name>
+			<url>http://repository.springsource.com/maven/bundles/release</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>evolvis-release-repository</id>
+			<name>evolvis.org release repository</name>
+			<url>http://maven-repo.evolvis.org/releases</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-dependency-plugin
+										</artifactId>
+										<versionRange>
+											[2.1,)
+										</versionRange>
+										<goals>
+											<goal>unpack</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.eclipse.virgo.bundlor
+										</groupId>
+										<artifactId>
+											org.eclipse.virgo.bundlor.maven
+										</artifactId>
+										<versionRange>
+											[1.1.1.RELEASE,)
+										</versionRange>
+										<goals>
+											<goal>bundlor</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.virgo.bundlor</groupId>
+					<artifactId>org.eclipse.virgo.bundlor.maven</artifactId>
+					<version>${bundlor.plugin.version}</version>
+					<configuration>
+						<failOnWarnings>false</failOnWarnings>
+						<removeNullHeaders>true</removeNullHeaders>
+					</configuration>
+					<executions>
+						<execution>
+							<id>bundlor</id>
+							<phase>process-classes</phase>
+							<goals>
+								<goal>bundlor</goal>
+							</goals>
+							<configuration>
+								<outputPath>${basedir}/src/main/resources/</outputPath>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>${jar.plugin.version}</version>
+					<configuration>
+						<archive>
+							<manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+							<manifestEntries>
+								<Implementation-Vendor>moTwin</Implementation-Vendor>
+								<Implementation-Title>${project.name}</Implementation-Title>
+								<Implementation-Version>${project.version}</Implementation-Version>
+								<Specification-Vendor>moTwin</Specification-Vendor>
+								<Specification-Title>${project.name}</Specification-Title>
+								<Specification-Version>${project.version}</Specification-Version>
+								<Bundle-Vendor>moTwin</Bundle-Vendor>
+							</manifestEntries>
+						</archive>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<!-- bundlor : generate manifest using the template.mf file -->
+			<plugin>
+				<groupId>org.eclipse.virgo.bundlor</groupId>
+				<artifactId>org.eclipse.virgo.bundlor.maven</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.1</version>
+				<executions>
+					<execution>
+						<id>unpack</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.twitter4j</groupId>
+									<artifactId>twitter4j-core</artifactId>
+									<version>3.0.3</version>
+									<overWrite>true</overWrite>
+									<outputDirectory>target/classes</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.twitter4j</groupId>
+									<artifactId>twitter4j-async</artifactId>
+									<version>3.0.3</version>
+									<overWrite>true</overWrite>
+									<outputDirectory>target/classes</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.twitter4j</groupId>
+									<artifactId>twitter4j-media-support</artifactId>
+									<version>3.0.3</version>
+									<overWrite>true</overWrite>
+									<outputDirectory>target/classes</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.twitter4j</groupId>
+									<artifactId>twitter4j-stream</artifactId>
+									<version>3.0.3</version>
+									<overWrite>true</overWrite>
+									<outputDirectory>target/classes</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+						<manifestEntries>
+							<Implementation-Title>${project.name}</Implementation-Title>
+							<Implementation-Version>${project.version}</Implementation-Version>
+							<Specification-Title>${project.name}</Specification-Title>
+							<Specification-Version>${project.version}</Specification-Version>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.twitter4j</groupId>
+			<artifactId>twitter4j-core</artifactId>
+			<version>3.0.3</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>org.twitter4j</groupId>
+			<artifactId>twitter4j-async</artifactId>
+			<version>3.0.3</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>org.twitter4j</groupId>
+			<artifactId>twitter4j-media-support</artifactId>
+			<version>3.0.3</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>org.twitter4j</groupId>
+			<artifactId>twitter4j-stream</artifactId>
+			<version>3.0.3</version>
+			<type>jar</type>
+		</dependency>
+	</dependencies>
+
+</project>
